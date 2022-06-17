@@ -1,0 +1,21 @@
+FROM fedora:latest
+LABEL version="1.0"
+LABEL description="Fedora KDE Image made for easy and clean distrohopping"
+LABEL xyz.akdev.distrohop.image="fedora-kde"
+
+COPY entrypoint.sh /entrypoint.sh
+
+RUN dnf install -y \
+        https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
+        https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
+    dnf install -y @kde-desktop-environment && \
+    dnf install -y --releasever=37 \
+        xorg-x11-drv-nvidia xorg-x11-drv-nvidia-cuda && \
+    systemctl mask \
+        systemd-load-modules \
+        NetworkManager \
+        NetworkManager-wait-online \
+        bluetooth \
+        rtkit-daemon
+
+ENTRYPOINT [ "/entrypoint.sh" ]
